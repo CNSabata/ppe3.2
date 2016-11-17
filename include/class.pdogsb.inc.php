@@ -17,7 +17,7 @@
 
 class PdoGsb{   		
       	private static $serveur='mysql:host=localhost';
-      	private static $bdd='dbname=gsbvalide';   		
+      	private static $bdd='dbname=gsbfrais';   		
       	private static $user='root' ;    		
       	private static $mdp='' ;	
 		private static $monPdo;
@@ -54,7 +54,7 @@ class PdoGsb{
  * @return l'id, le nom et le prénom sous la forme d'un tableau associatif 
 */
 	public function getInfosVisiteur($login, $mdp){
-		$req = "select visiteur.id as id, visiteur.nom as nom, visiteur.prenom as prenom from visiteur 
+		$req = "select visiteur.id as id, visiteur.nom as nom, visiteur.prenom as prenom , groupe from visiteur 
 		where visiteur.login='$login' and visiteur.mdp='$mdp'";
 		$rs = PdoGsb::$monPdo->query($req);
 		$ligne = $rs->fetch();
@@ -296,6 +296,19 @@ class PdoGsb{
 		$req = "update ficheFrais set idEtat = '$etat', dateModif = now() 
 		where fichefrais.idvisiteur ='$idVisiteur' and fichefrais.mois = '$mois'";
 		PdoGsb::$monPdo->exec($req);
+	}
+
+	public function selectVisiteur(){
+		$req = "SELECT * FROM visiteur,fichefrais WHERE idEtat ='CL' AND visiteur.id = fichefrais.idvisiteur  " ;
+		$res = PdoGsb::$monPdo->query($req);
+		$lesLignes = $res->fetchAll();
+		return $lesLignes;
+	}
+		public function selectlignefraishorsforfait(){
+		$req2 = "SELECT * FROM lignefraishorsforfait";
+		$res2 = PdoGsb::$monPdo->query($req2);
+		$lesLignes2 = $res2->fetchAll();
+		return $lesLignes2;
 	}
 }
 ?>
